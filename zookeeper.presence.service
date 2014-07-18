@@ -1,5 +1,5 @@
 [Unit]
-Description=Zookeeper->SkyDNS
+Description=zookeeper.presence
 BindTo=zookeeper@%i.service
 After=zookeeper@%i.service
 
@@ -12,18 +12,14 @@ EnvironmentFile=/etc/environment
 # as suggested here: http://mnx.io/blog/a-proper-server-naming-scheme/
 Environment=REGION=us-west-2
 Environment=ZK_CLIENT_PORT=2181
-Environment=ZK_PEER_PORT=2888
-Environment=ZK_LEADER_PORT=3888
 
-ExecStart=/usr/bin/etcdctl set --ttl 60 /skydns/local/cluster/prod/zookeeper-%i "{\"host\":\"${COREOS_PRIVATE_IPV4}\",\"port\":${ZK_CLIENT_PORT}}"
-
-ExecStart=/usr/bin/etcdctl set --ttl 60 /skydns/local/cluster/${REGION}/prod/_tcp/_zookeeper "{\"host\":\"${COREOS_PRIVATE_IPV4}\",\"port\":${ZK_CLIENT_PORT}}"
-ExecStart=/usr/bin/etcdctl set --ttl 60 /skydns/local/cluster/${REGION}/prod/_tcp/_zookeeper-peer "{\"host\":\"${COREOS_PRIVATE_IPV4}\",\"port\":${ZK_PEER_PORT}}"
-ExecStart=/usr/bin/etcdctl set --ttl 60 /skydns/local/cluster/${REGION}/prod/_tcp/_zookeeper-leader "{\"host\":\"${COREOS_PRIVATE_IPV4}\",\"port\":${ZK_LEADER_PORT}}"
-# ExecStart=/usr/bin/etcdctl set --ttl 60 /skydns/local/cluster/${REGION}/prod/_tcp/_zookeeper-jmx "{\"host\":\"${COREOS_PRIVATE_IPV4}\",\"port\":1689}"
-# _zookeeper._tcp.prod.us-west-2.cluster.local 1689
+ExecStart=/usr/bin/etcdctl set --ttl 60 /skydns/local/cluster/test/zookeeper-%i "{\"host\":\"${COREOS_PRIVATE_IPV4}\",\"port\":${ZK_CLIENT_PORT}}" && \
+          /usr/bin/etcdctl set --ttl 60 /skydns/local/cluster/test/_tcp/_zookeeper/%i "{\"host\":\"${COREOS_PRIVATE_IPV4}\",\"port\":${ZK_CLIENT_PORT}}"
+# zookeeper-1.test.cluster.local 2181
+# _zookeeper._tcp.test.cluster.local 2181
 Restart=always
 RestartSec=30
 
 [X-Fleet]
 X-ConditionMachineOf=zookeeper@%i.service
+# X-Conflicts=zookeeper.presence@*.service
