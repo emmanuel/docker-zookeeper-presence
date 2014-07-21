@@ -6,7 +6,7 @@ After=zookeeper@%i.service
 [Service]
 Type=simple
 EnvironmentFile=/etc/environment
-Environment="ENV=tst"
+Environment="ENV=test"
 Environment="ZK_CLIENT_PORT=2181"
 
 ExecStartPre=/usr/bin/printf "Announcing: /skydns/local/cluster/${ENV}/zookeeper-%i {\"host\":\"%m.hosts.cluster.local\",\"port\":${ZK_CLIENT_PORT}}\n"
